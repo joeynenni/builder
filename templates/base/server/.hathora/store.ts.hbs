@@ -45,15 +45,13 @@ setInterval(() => {
   {{#if tick}}
   const currTime = Date.now();
   rooms.forEach(async ({ impl, chance, subscriptions }, stateId) => {
-    if (subscriptions.size > 0) {
-      const timeDelta = currTime - prevUpdateTime;
-      await impl.onTick(ctx(chance, currTime, stateId), timeDelta / 1000);
-      const changedAt = impl.changedAt();
-      if (changedAt !== undefined) {
-        changedStates.set(stateId, changedAt);
-        pendingMessages.delete(stateId);
-        log.append(stateId, currTime, new Writer().writeUInt8(0xff).writeUVarint(timeDelta).toBuffer());
-      }
+    const timeDelta = currTime - prevUpdateTime;
+    await impl.onTick(ctx(chance, currTime, stateId), timeDelta / 1000);
+    const changedAt = impl.changedAt();
+    if (changedAt !== undefined) {
+      changedStates.set(stateId, changedAt);
+      pendingMessages.delete(stateId);
+      log.append(stateId, currTime, new Writer().writeUInt8(0xff).writeUVarint(timeDelta).toBuffer());
     }
   });
   prevUpdateTime = currTime;
@@ -65,9 +63,10 @@ setInterval(() => {
   pendingMessages.clear();
 }, {{#if tick}}{{tick}}{{else}}50{{/if}});
 setInterval(() => {
-  rooms.forEach(async ({ impl, subscriptions }, stateId) => {
+  rooms.forEach(async ({ impl, chance, subscriptions }, stateId) => {
     if (subscriptions.size === 0) {
-      await impl.onShutdown(ctxNoEvents(chance, time, stateId));
+      const currTime = Date.now();
+      await impl.onShutdown(ctxNoEvents(chance, currTime, stateId));
       rooms.delete(stateId);
       log.unload(stateId);
     }
