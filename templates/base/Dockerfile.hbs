@@ -6,8 +6,8 @@ RUN apk add --update git
 
 COPY . .
 
-RUN npm i -g hathora@{{ hathoraVersion }}
-RUN npx hathora build --only server
+RUN npm i -g hathora-builder@{{ hathoraVersion }}
+RUN npx hathora-builder build --only server
 
 FROM node:18.18-alpine
 
