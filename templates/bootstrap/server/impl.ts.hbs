@@ -37,6 +37,7 @@ export class Impl implements Methods<InternalState> {
   {{#if tick}}
   onTick(state: InternalState, ctx: Context, timeDelta: number): void {}
   {{/if}}
+  onShutdown(state: InternalState, ctx: Context): void {}
 }
 {{#*inline "renderDefault"}}
 {{#if (eq type "array")}}

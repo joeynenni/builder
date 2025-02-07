@@ -65,8 +65,9 @@ setInterval(() => {
   pendingMessages.clear();
 }, {{#if tick}}{{tick}}{{else}}50{{/if}});
 setInterval(() => {
-  rooms.forEach(({ subscriptions }, stateId) => {
+  rooms.forEach(async ({ impl, subscriptions }, stateId) => {
     if (subscriptions.size === 0) {
+      await impl.onShutdown(ctxNoEvents(chance, time, stateId));
       rooms.delete(stateId);
       log.unload(stateId);
     }
