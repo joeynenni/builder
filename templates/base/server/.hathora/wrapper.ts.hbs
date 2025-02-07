@@ -37,6 +37,10 @@ export class ImplWrapper {
     restoreSideEffectFunctions();
   }
   {{/if}}
+  public async onShutdown(ctx: Context) {
+    const impl = await getLatestImpl();
+    return impl.onShutdown(this.state, ctx);
+  }
   public async getUserState(userId: UserId) {
     const impl = await getLatestImpl();
     return impl.getUserState(onChange.target(this.state), userId);
